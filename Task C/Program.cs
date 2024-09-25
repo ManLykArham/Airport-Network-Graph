@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Task_C
 {
@@ -16,87 +13,162 @@ namespace Task_C
 
             do
             {
-                // Displays the menu options to the user
-                Console.WriteLine("Press ENTER");
-                Console.ReadKey();
-                Console.Clear();
-                Console.WriteLine("1. Insert an Airport by adding its code");
-                Console.WriteLine("2. Remove an Airport by adding its code");
-                Console.WriteLine("3. Insert a direct flight between 2 airports given their codes");
-                Console.WriteLine("4. Display Direct or Connected flights from Starting Airport");
-                Console.WriteLine("5. Exit");
-                Console.WriteLine("\n Choose a function");
-
-                // Reads the user's choice
+                DisplayMenu();
                 string option = Console.ReadLine();
 
-                // Switch case to handle user choice
                 switch (option)
                 {
                     case "1":
-                        // Prompts the user to insert an airport code and checks if it already exists
-                        Console.WriteLine("Please insert airport code:");
-                        string airport = Console.ReadLine();
-                        if (testGraph.ContainsGraph(new GraphNode<string>(airport)))
-                        {
-                            Console.WriteLine("This airport has already been added");
-                        }
-                        else
-                            testGraph.AddNode(airport);  // Adds the airport if it doesn't exist
+                        AddAirport(testGraph);
                         break;
                     case "2":
-                        // Prompts the user to input an airport code to remove
-                        Console.WriteLine("Please insert airport code:");
-                        string removRport = Console.ReadLine();
-                        testGraph.Remove(testGraph.GetNodeByID(removRport));  // Removes the airport
+                        RemoveAirport(testGraph);
                         break;
                     case "3":
-                        // Prompts the user to insert two airports to establish a direct flight
-                        Console.WriteLine("From - Airport");
-                        string from = Console.ReadLine();
-                        Console.WriteLine("To - Airport");
-                        string to = Console.ReadLine();
-                        if (testGraph.IsAdjacent(testGraph.GetNodeByID(from), testGraph.GetNodeByID(to)))
-                        {
-                            Console.WriteLine("These 2 airports have already been connected");
-                        }
-                        else
-                            testGraph.AddEdge(from, to);  // Adds the flight if it doesn't exist
+                        AddFlight(testGraph);
                         break;
                     case "4":
-                        flights();  // Calls the method to display flight connections
+                        DisplayFlights(testGraph);
                         break;
                     case "5":
-                        finished = true;  // Ends the program
-                        Console.WriteLine("Give me First Class :)");
+                        testGraph.DisplayAllAirports();
+                        break;
+                    case "6":
+                        DisplayAirportAndFlightCount(testGraph);
+                        break;
+                    case "7":
+                        finished = true;
+                        Console.WriteLine("Exiting the program...");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option. Please select a valid option.");
                         break;
                 }
             } while (!finished);
+        }
 
-            // Function to display connected or direct flights
-            void flights()
+        // Displays the menu
+        static void DisplayMenu()
+        {
+            Console.WriteLine("Press ENTER to continue...");
+            Console.ReadKey();
+            Console.Clear();
+            Console.WriteLine("1. Insert an Airport by adding its code");
+            Console.WriteLine("2. Remove an Airport by adding its code");
+            Console.WriteLine("3. Insert a direct flight between 2 airports given their codes");
+            Console.WriteLine("4. Display Direct or Connected flights from Starting Airport");
+            Console.WriteLine("5. Display all Airports");
+            Console.WriteLine("6. Display the total number of Airports and Flights");
+            Console.WriteLine("7. Exit");
+            Console.WriteLine("\nChoose a function: ");
+        }
+
+        // Converts user input to uppercase for case-insensitivity
+        static string ConvertToUpper(string input)
+        {
+            return input.Trim().ToUpper();
+        }
+
+        // Adds an airport with validation
+        static void AddAirport(Graph<string> testGraph)
+        {
+            Console.WriteLine("Please insert airport code:");
+            string airport = ConvertToUpper(Console.ReadLine());
+
+            if (string.IsNullOrWhiteSpace(airport))
             {
-                Console.WriteLine("1. Connected Flights");
-                Console.WriteLine("2. Direct Flights");
-                Console.WriteLine("\nChoose method:");
-                string option = Console.ReadLine();
-
-                switch (option)
-                {
-                    case "1":
-                        // Displays all connected flights starting from a given airport
-                        Console.WriteLine("Starting Airport: ");
-                        string strAirport = Console.ReadLine();
-                        testGraph.displayCodes(strAirport);
-                        break;
-                    case "2":
-                        // Displays all direct flights from a given airport
-                        Console.WriteLine("Insert starting airport by its code:");
-                        string stAirport = Console.ReadLine();
-                        testGraph.adjlistOfnode(testGraph.GetNodeByID(stAirport));
-                        break;
-                }
+                Console.WriteLine("Airport code cannot be empty. Please try again.");
             }
+            else if (testGraph.ContainsGraph(new GraphNode<string>(airport)))
+            {
+                Console.WriteLine("This airport has already been added.");
+            }
+            else
+            {
+                testGraph.AddNode(airport);
+                Console.WriteLine("Airport added successfully.");
+            }
+        }
+
+        // Removes an airport with validation
+        static void RemoveAirport(Graph<string> testGraph)
+        {
+            Console.WriteLine("Please insert airport code:");
+            string airport = ConvertToUpper(Console.ReadLine());
+
+            if (string.IsNullOrWhiteSpace(airport))
+            {
+                Console.WriteLine("Airport code cannot be empty. Please try again.");
+            }
+            else if (testGraph.GetNodeByID(airport) != null)
+            {
+                testGraph.Remove(testGraph.GetNodeByID(airport));
+                Console.WriteLine("Airport removed successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Airport not found.");
+            }
+        }
+
+        // Adds a flight between two airports with validation
+        static void AddFlight(Graph<string> testGraph)
+        {
+            Console.WriteLine("From - Airport:");
+            string from = ConvertToUpper(Console.ReadLine());
+            Console.WriteLine("To - Airport:");
+            string to = ConvertToUpper(Console.ReadLine());
+
+            if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(to))
+            {
+                Console.WriteLine("Airport codes cannot be empty. Please try again.");
+            }
+            else if (testGraph.GetNodeByID(from) == null || testGraph.GetNodeByID(to) == null)
+            {
+                Console.WriteLine("One or both of the airports do not exist. Please add them first.");
+            }
+            else if (testGraph.IsAdjacent(testGraph.GetNodeByID(from), testGraph.GetNodeByID(to)))
+            {
+                Console.WriteLine("These two airports have already been connected.");
+            }
+            else
+            {
+                testGraph.AddEdge(from, to);
+                Console.WriteLine("Direct flight added between {0} and {1}.", from, to);
+            }
+        }
+
+        // Displays flight connections (direct or connected)
+        static void DisplayFlights(Graph<string> testGraph)
+        {
+            Console.WriteLine("1. Connected Flights");
+            Console.WriteLine("2. Direct Flights");
+            Console.WriteLine("\nChoose method:");
+            string option = Console.ReadLine();
+
+            switch (option)
+            {
+                case "1":
+                    Console.WriteLine("Starting Airport:");
+                    string strAirport = ConvertToUpper(Console.ReadLine());
+                    testGraph.DisplayConnectedFlights(strAirport);
+                    break;
+                case "2":
+                    Console.WriteLine("Insert starting airport by its code:");
+                    string stAirport = ConvertToUpper(Console.ReadLine());
+                    testGraph.DisplayDirectFlights(stAirport);
+                    break;
+                default:
+                    Console.WriteLine("Invalid option.");
+                    break;
+            }
+        }
+
+        // Displays the total number of airports and flights
+        static void DisplayAirportAndFlightCount(Graph<string> testGraph)
+        {
+            Console.WriteLine("Number of Airports: " + testGraph.NumNodesGraph());
+            Console.WriteLine("Number of Flights: " + testGraph.NumEdgesGraph());
         }
     }
 }

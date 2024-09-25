@@ -42,30 +42,55 @@ namespace Task_C
         // Displays all airports that are connected directly or indirectly from the starting airport
         public void displayCodes(T startNode)
         {
-            LinkedList<T> adjj;
+            if (GetNodeByID(startNode) == null)
+            {
+                Console.WriteLine("Starting airport not found.");
+                return;
+            }
+
+            Queue<T> toVisit = new Queue<T>();
             List<T> visited = new List<T>();
-            Stack<T> toVisit = new Stack<T>();
             GraphNode<T> current;
 
-            toVisit.Push(startNode);
+            toVisit.Enqueue(startNode);
+            visited.Add(startNode);
+
             while (toVisit.Count != 0)
             {
-                current = this.GetNodeByID(toVisit.Pop());
-                visited.Add(current.ID);
+                current = this.GetNodeByID(toVisit.Dequeue());
 
-                adjj = current.GetAdjList();
-                foreach (T curr in adjj)
+                Console.WriteLine("Currently at: " + current.ID);
+
+                foreach (T neighbor in current.GetAdjList())
                 {
-                    if (!toVisit.Contains(curr) && !visited.Contains(curr))
+                    if (!visited.Contains(neighbor))
                     {
-                        toVisit.Push(curr);
+                        toVisit.Enqueue(neighbor);
+                        visited.Add(neighbor);
                     }
                 }
             }
-            Console.WriteLine("Conected Flights: ");
-            for (int i = 1; i < visited.Count; i++)
+
+            Console.WriteLine("\nConnected Flights from " + startNode + ":");
+            for (int i = 1; i < visited.Count; i++)  // Skip the starting airport
             {
                 Console.WriteLine(visited[i].ToString());
+            }
+        }
+
+        // Displays all of the airports
+        public void DisplayAllAirports()
+        {
+            if (nodes.Count == 0)
+            {
+                Console.WriteLine("No airports available.");
+                return;
+            }
+
+            Console.WriteLine("All Airports in the network:");
+            foreach (GraphNode<T> n in nodes)
+            {
+                Console.WriteLine(n.ID.ToString());
             }
         }
 
@@ -141,25 +166,31 @@ namespace Task_C
         // Displays the direct connections of a specific airport
         public void adjlistOfnode(GraphNode<T> node)
         {
+            if (node == null)
+            {
+                Console.WriteLine("Airport not found.");
+                return;
+            }
+
             Console.WriteLine("\nAirport: {0}", node.ID);
             Console.WriteLine("Airports available using Direct Flights: ");
+
             foreach (T n in node.GetAdjList())
             {
                 Console.WriteLine(n.ToString());
             }
         }
 
+
         // Returns the number of nodes (airports) in the graph
         public int NumNodesGraph()
         {
-            Console.WriteLine(nodes.Count);
             return nodes.Count;
         }
 
         // Returns the number of edges (flights) in the graph
         public int NumEdgesGraph()
         {
-            Console.WriteLine(edgesCounter);
             return edgesCounter;
         }
 
@@ -206,5 +237,57 @@ namespace Task_C
             }
             return list;
         }
+
+        public void DisplayConnectedFlights(T startNode)
+        {
+            if (GetNodeByID(startNode) == null)
+            {
+                Console.WriteLine("Starting airport not found.");
+                return;
+            }
+
+            Queue<T> toVisit = new Queue<T>();
+            HashSet<T> visited = new HashSet<T>();  // HashSet to avoid duplicates
+            GraphNode<T> current;
+
+            toVisit.Enqueue(startNode);
+            visited.Add(startNode);
+
+            Console.WriteLine($"Connected Flights from {startNode}:");
+
+            while (toVisit.Count != 0)
+            {
+                current = this.GetNodeByID(toVisit.Dequeue());
+
+                foreach (T neighbor in current.GetAdjList())
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        Console.WriteLine(neighbor);  // Display connected airport
+                        toVisit.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        public void DisplayDirectFlights(T startNode)
+        {
+            GraphNode<T> node = GetNodeByID(startNode);
+            if (node == null)
+            {
+                Console.WriteLine("Airport not found.");
+                return;
+            }
+
+            Console.WriteLine($"\nAirport: {node.ID}");
+            Console.WriteLine("Airports available using Direct Flights: ");
+
+            foreach (T neighbor in node.GetAdjList())
+            {
+                Console.WriteLine(neighbor);  // Display directly connected airports
+            }
+        }
+
     }
 }
