@@ -41,7 +41,7 @@ This project simulates an airport network using a **graph data structure**, wher
 
 ## 🎥 Demo
 
-Watch the demo of the AI Image Generator Web App:
+Watch the demo of the Airport Network Graph App:
 
 [Demo Video](https://youtu.be/1wkMMBl2UVs?si=4xfmsU5TUqg90LUv)
 
