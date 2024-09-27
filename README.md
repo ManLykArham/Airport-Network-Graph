@@ -39,6 +39,14 @@ This project simulates an airport network using a **graph data structure**, wher
 
 ---
 
+## 🎥 Demo
+
+Watch the demo of the AI Image Generator Web App:
+
+[Demo Video](https://youtu.be/1wkMMBl2UVs?si=4xfmsU5TUqg90LUv)
+
+---
+
 ## 🏆 Achievements
 
 This project enhanced my understanding of **graph data structures** and their **real-world applications**. I successfully implemented adjacency lists to manage connections between airports, and applied **graph traversal techniques** to efficiently display reachable airports. The ability to add and remove nodes and edges helped reinforce my knowledge of **dynamic graph management** and the importance of efficient operations for larger datasets. 🗺️
